@@ -55,6 +55,7 @@ namespace IdentityTesting.App.Controllers
 
         [Route("Register")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([FromForm] RegisterModel2 registerModel, string returnUrl = "")
         {
             _logger.LogInformation("User registration: Started");

@@ -1,0 +1,29 @@
+﻿@model IdentityTesting.App.Controllers.RegisterModel2
+<main class="main">
+    <div class="content register">
+        <h1 class="title">Register</h1>
+        <form novalidate asp-route-returnUrl="@Model.ReturnUrl" method="post" class="register__form">
+            <div>
+                <label class="label">Email</label>
+                <input type="email" required="" class="input" id="userName"
+                       placeholder="email@domain.com" name="Input.Email"
+                       aria-describedby="userName-error" aria-invalid="false" />
+                <span class="error hidden" role="alert" aria-relevant="all" id="userName-error"></span>
+            </div>
+            <div>
+                <label class="label">Password</label>
+                <input type="password" required="" class="input" id="password" name="Input.Password"
+                       aria-describedby="password-error" aria-invalid="false" />
+                <span class="error hidden" role="alert" aria-relevant="all" id="password-error"></span>
+            </div>
+            <div class="not-mobile register__button-and-link">
+                <span class="register__additional-link">
+                    Already registered? <a href="login?returnUrl=@Html.UrlEncoder.Encode(Model.ReturnUrl)">Log in</a>
+                </span>
+                <button class="button register__email-continue" name="button" value="continue" type="submit">
+                    CONTINUE
+                </button>
+            </div>
+        </form>
+    </div>
+</main>

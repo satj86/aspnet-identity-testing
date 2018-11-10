@@ -61,6 +61,7 @@ namespace IdentityTesting.App.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
@@ -79,7 +80,7 @@ namespace IdentityTesting.App.Areas.Identity.Pages.Account
                     //    values: new { userId = user.Id, code = code },
                     //    protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", code);
+                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", code);
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
