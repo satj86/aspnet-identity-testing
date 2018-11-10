@@ -22,28 +22,51 @@ namespace IdentityTesting.IntegrationTests
         [Fact]        
         public async Task Get_EndpointsReturnSuccessAndCorrectContentType()
         {
-            // Arrange
             var client = _appFactory.CreateClient();
 
-            var r1 = await client.GetAsync("/Identity/Account/Register");
-            r1.EnsureSuccessStatusCode();
+            //Register
+            var getRegisterResponse = await client.GetAsync("/Identity/Account/Register");
+            getRegisterResponse.EnsureSuccessStatusCode();
+            var registerAntiForgeryToken = await AntiForgeryHelper.ExtractAntiForgeryToken(getRegisterResponse);
 
-            string antiForgeryToken = await AntiForgeryHelper.ExtractAntiForgeryToken(r1);
-
-            var content = new FormUrlEncodedContent(new Dictionary<string, string> {
-                {"__RequestVerificationToken", antiForgeryToken},
+            var registerContent = new FormUrlEncodedContent(new Dictionary<string, string> {
+                {"__RequestVerificationToken", registerAntiForgeryToken},
                 {"Input.Email", "sat@sat.com" },
                 {"Input.Password", "HelloSatnam123!"},
                 {"Input.ConfirmPassword", "HelloSatnam123!"} }
             );
-            
-            // Act
-            var response = await client.PostAsync("/Identity/Account/Register", content);
+            var postRegisterResponse = await client.PostAsync("/Identity/Account/Register", registerContent);
+
+            //Sign-in
+            HttpResponseMessage postLoginResponse = await SignIn(client);
+            HttpResponseMessage postLoginResponse1 = await SignIn(client);
+            HttpResponseMessage postLoginResponse2 = await SignIn(client);
+            HttpResponseMessage postLoginResponse3 = await SignIn(client);
+            HttpResponseMessage postLoginResponse4 = await SignIn(client);
+            HttpResponseMessage postLoginResponse5 = await SignIn(client);
+
+            //Verify lockout
 
             // Assert
-            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            postLoginResponse.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.Equal("text/html; charset=utf-8",
-                response.Content.Headers.ContentType.ToString());
+                postRegisterResponse.Content.Headers.ContentType.ToString());
+        }
+
+        private static async Task<HttpResponseMessage> SignIn(HttpClient client)
+        {
+            var getLoginResponse = await client.GetAsync("/Identity/Account/Login");
+            getLoginResponse.EnsureSuccessStatusCode();
+            var loginAntiForgeryToken = await AntiForgeryHelper.ExtractAntiForgeryToken(getLoginResponse);
+
+            var loginContent = new FormUrlEncodedContent(new Dictionary<string, string> {
+                {"__RequestVerificationToken", loginAntiForgeryToken},
+                {"Input.Email", "sat@sat.com" },
+                {"Input.Password", "HelloSatnam123"} }
+            );
+
+            var postLoginResponse = await client.PostAsync("/Identity/Account/Login", loginContent);
+            return postLoginResponse;
         }
 
         public class AntiForgeryHelper

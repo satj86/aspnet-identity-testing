@@ -48,7 +48,11 @@ namespace IdentityTesting.App
                 //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                 //}
             });
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<IdentityUser>(options=> {
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
