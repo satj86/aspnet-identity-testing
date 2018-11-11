@@ -7,6 +7,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using IdentityTesting.App.Controllers;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace IdentityTesting.IntegrationTests
 {
@@ -38,7 +39,6 @@ namespace IdentityTesting.IntegrationTests
             var postRegisterResponse = await client.PostAsync("/Identity/Account/Register", registerContent);
 
             //Sign-in
-            HttpResponseMessage postLoginResponse = await SignIn(client);
             HttpResponseMessage postLoginResponse1 = await SignIn(client);
             HttpResponseMessage postLoginResponse2 = await SignIn(client);
             HttpResponseMessage postLoginResponse3 = await SignIn(client);
@@ -46,11 +46,12 @@ namespace IdentityTesting.IntegrationTests
             HttpResponseMessage postLoginResponse5 = await SignIn(client);
 
             //Verify lockout
+            Assert.EndsWith("Lockout", postLoginResponse5.RequestMessage.RequestUri.AbsolutePath);
 
-            // Assert
-            postLoginResponse.EnsureSuccessStatusCode(); // Status Code 200-299
-            Assert.Equal("text/html; charset=utf-8",
-                postRegisterResponse.Content.Headers.ContentType.ToString());
+            //// Assert
+            //postLoginResponse.EnsureSuccessStatusCode(); // Status Code 200-299
+            //Assert.Equal("text/html; charset=utf-8",
+            //    postRegisterResponse.Content.Headers.ContentType.ToString());
         }
 
         private static async Task<HttpResponseMessage> SignIn(HttpClient client)
