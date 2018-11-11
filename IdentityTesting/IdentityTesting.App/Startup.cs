@@ -12,9 +12,23 @@ using Microsoft.EntityFrameworkCore;
 using IdentityTesting.App.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace IdentityTesting.App
 {
+    public interface ISomeThinger {
+        string DoSomething();
+    }
+
+    public class ActualSomeThinger : ISomeThinger {
+        private readonly ILogger<ActualSomeThinger> _logger;
+
+        public string DoSomething()
+        {
+            return "From ActualSomeThinger";
+        }
+    }
+
     public class Startup
     {
         private readonly IHostingEnvironment _environment;
@@ -55,7 +69,7 @@ namespace IdentityTesting.App
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
+            services.AddTransient<ISomeThinger, ActualSomeThinger>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

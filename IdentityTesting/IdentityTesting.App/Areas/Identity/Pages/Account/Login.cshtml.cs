@@ -17,11 +17,13 @@ namespace IdentityTesting.App.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ISomeThinger _someThinger;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, ISomeThinger someThinger)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _someThinger = someThinger;
         }
 
         [BindProperty]
@@ -68,6 +70,8 @@ namespace IdentityTesting.App.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
+
+            var x = _someThinger.DoSomething();
 
             if (ModelState.IsValid)
             {

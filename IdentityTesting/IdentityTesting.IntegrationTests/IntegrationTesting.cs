@@ -8,9 +8,31 @@ using Newtonsoft.Json;
 using IdentityTesting.App.Controllers;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using IdentityTesting.App.Data;
+using Microsoft.Extensions.Configuration;
+using IdentityTesting.App;
 
 namespace IdentityTesting.IntegrationTests
 {
+    public class TestSomeThinger : ISomeThinger
+    {
+        public string DoSomething()
+        {
+            return "From TestSomeThinger";
+        }
+    }
+
+
     public partial class IntegrationTesting : IClassFixture<WebApplicationFactory<IdentityTesting.App.Startup>>
     {
         private readonly WebApplicationFactory<App.Startup> _appFactory;
@@ -23,8 +45,12 @@ namespace IdentityTesting.IntegrationTests
         [Fact]        
         public async Task Get_EndpointsReturnSuccessAndCorrectContentType()
         {
-            var client = _appFactory.CreateClient();
-
+            var client = _appFactory
+                .WithWebHostBuilder(builder => builder.ConfigureTestServices(x=> {
+                    //x.AddTransient<ISomeThinger, TestSomeThinger>();
+                }))
+                .CreateClient();
+                        
             //Register
             var getRegisterResponse = await client.GetAsync("/Identity/Account/Register");
             getRegisterResponse.EnsureSuccessStatusCode();
